@@ -1,0 +1,2666 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>منظومة آلات السحب الذاتي - النظام المتكامل</title>
+<style>
+  :root{--bg1:#003366;--bg2:#00cc99;--card:rgba(255,255,255,0.10);--card-2:rgba(255,255,255,0.18)}
+  body{margin:0;font-family:Tahoma,Arial,Helvetica,sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff;min-height:100vh}
+  .wrap{display:flex;align-items:flex-start;justify-content:center;min-height:100vh;padding:16px}
+  .box{width:100%;max-width:1200px;padding:24px;border-radius:16px;background:var(--card);box-shadow:0 6px 30px rgba(0,0,0,0.4);min-height:auto}
+  h1,h2{margin:8px 0 12px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+  .icon{background:var(--card-2);padding:18px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700}
+  .icon:hover{transform:scale(1.03);transition:.15s}
+  input,select,textarea{width:96%;padding:10px;margin:8px 0;border-radius:8px;border:none;outline:none}
+  textarea{min-height:60px}
+  button{background:#00cc99;border:none;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;margin-right:8px}
+  button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.12)}
+  .hidden{display:none !important}
+  .topbar{display:flex;justify-content:space-between;align-items:center}
+  table{width:100%;border-collapse:collapse;margin-top:12px;color:#fff}
+  th,td{padding:8px;border:1px solid rgba(255,255,255,0.12);text-align:center}
+  th{background:rgba(0,0,0,0.25)}
+  .actions button{margin:4px}
+  .small{font-size:0.9rem;padding:6px 10px}
+  .danger{background:#ff6b6b}
+  .note{font-size:0.9rem;color:#e5f7ef}
+  .flexrow{display:flex;gap:8px;align-items:center}
+  .center{display:flex;justify-content:center;align-items:center}
+  .readonly{background:rgba(255,255,255,0.03);opacity:0.95}
+  .notif{background:rgba(255,255,255,0.06);padding:10px;border-radius:8px;margin:8px 0}
+  .report-section{margin-bottom:20px;padding:15px;border-radius:10px;background:rgba(255,255,255,0.05)}
+  .report-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .report-stats{display:flex;gap:15px;margin-bottom:15px}
+  .stat-card{background:rgba(255,255,255,0.08);padding:10px;border-radius:8px;flex:1;text-align:center}
+  .back-btn{background:#4a6fa5;margin-bottom:15px}
+  .user-management-container {display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap;}
+  .user-form-container {flex: 1; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; min-width: 300px;}
+  .user-list-container {flex: 2; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; min-width: 500px;}
+  .form-group {margin-bottom: 15px;}
+  .form-group label {display: block; margin-bottom: 5px; font-weight: bold;}
+  .form-actions {display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;}
+  .user-type-badge {padding: 3px 8px; border-radius: 12px; font-size: 0.8rem;}
+  .user-type-admin {background: #ff6b6b; color: white;}
+  .user-type-user {background: #00cc99; color: white;}
+  .message-success {background: rgba(0, 204, 153, 0.2); color: #00cc99; border: 1px solid #00cc99;}
+  .message-error {background: rgba(255, 107, 107, 0.2); color: #ff6b6b; border: 1px solid #ff6b6b;}
+  .message-info {background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2);}
+  .modal {position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000;}
+  .modal-content {background: var(--card); padding: 20px; border-radius: 10px; width: 90%; max-width: 500px;}
+  .modal-header {display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;}
+  .close-btn {background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;}
+  .quantity-history {margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px;}
+  .history-item {display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.1);}
+  .history-item:last-child {border-bottom: none;}
+
+  .section {
+    max-height: none;
+    overflow: visible;
+  }
+  
+  .section-content {
+    max-height: none;
+    overflow-y: visible;
+  }
+  
+  .form-container {
+    background: rgba(255,255,255,0.05);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+  
+  .table-container {
+    max-height: 60vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+  
+  .table-container table {
+    margin-top: 0;
+  }
+  
+  .table-container thead th {
+    position: sticky;
+    top: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 2;
+  }
+
+  .loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .machine-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    margin: 5px 0;
+    background: rgba(255,255,255,0.05);
+    border-radius: 5px;
+  }
+
+  .invoice-status-pending { color: #ffa500; }
+  .invoice-status-approved { color: #00cc99; }
+  .invoice-status-rejected { color: #ff6b6b; }
+
+  .branch-report-details {
+    background: rgba(255,255,255,0.05);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+  }
+
+  .report-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .report-tab {
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .report-tab.active {
+    background: #00cc99;
+  }
+  
+  .report-tab:hover {
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* تصميم جديد للشاشة الرئيسية للمستخدمين */
+  .user-dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .dashboard-card {
+    background: rgba(255,255,255,0.08);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  .dashboard-card h3 {
+    margin-top: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+  }
+
+  /* تصميم بطاقات قطع الغيار */
+  .parts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+  }
+  
+  .part-card {
+    background: rgba(255,255,255,0.08);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+  }
+  
+  .part-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.12);
+  }
+  
+  .part-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .part-card-header strong {
+    color: #00cc99;
+    font-size: 1.1rem;
+  }
+  
+  .part-code {
+    background: rgba(255,255,255,0.1);
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-family: monospace;
+  }
+  
+  .part-quantity {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 8px 0;
+  }
+  
+  .quantity-status {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: inline-block;
+  }
+  
+  .status-available {
+    background: rgba(0, 204, 153, 0.2);
+    color: #00cc99;
+    border: 1px solid #00cc99;
+  }
+  
+  .status-low {
+    background: rgba(255, 165, 0, 0.2);
+    color: #ffa500;
+    border: 1px solid #ffa500;
+  }
+  
+  .status-unavailable {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+    border: 1px solid #ff6b6b;
+  }
+  
+  .search-box {
+    margin-bottom: 20px;
+  }
+  
+  .search-box input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    font-size: 1rem;
+  }
+  
+  .search-box input::placeholder {
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* تصميم الفاتورة متعددة القطع */
+  .multi-invoice-form {
+    background: rgba(255,255,255,0.05);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .invoice-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+  }
+  
+  .invoice-items-table th {
+    background: rgba(0,0,0,0.3);
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .invoice-items-table td {
+    padding: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .invoice-summary {
+    background: rgba(255,255,255,0.08);
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+  }
+  
+  .item-actions {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+  }
+  
+  @media (max-width: 768px) {
+    .user-dashboard {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* إضافات التصميم */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .section-header h4 {
+    margin: 0;
+    color: #00cc99;
+  }
+  
+  .status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .status-success {
+    background: rgba(0, 204, 153, 0.2);
+    color: #00cc99;
+    border: 1px solid #00cc99;
+  }
+  
+  .status-warning {
+    background: rgba(255, 165, 0, 0.2);
+    color: #ffa500;
+    border: 1px solid #ffa500;
+  }
+  
+  .status-danger {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+    border: 1px solid #ff6b6b;
+  }
+  
+  .status-info {
+    background: rgba(74, 111, 165, 0.2);
+    color: #4a6fa5;
+    border: 1px solid #4a6fa5;
+  }
+  
+  .badge {
+    background: rgba(255,255,255,0.1);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
+  
+  .stat-mini-card {
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  .stat-mini-card div:first-child {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: 8px;
+  }
+  
+  button.active {
+    background: #00cc99 !important;
+    transform: scale(1.05);
+  }
+  
+  code {
+    background: rgba(255,255,255,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="box" id="app">
+
+    <!-- شاشة التحميل -->
+    <div id="loadingView" class="center" style="flex-direction: column; gap: 20px;">
+      <div class="loading"></div>
+      <p>جاري تحميل النظام...</p>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="loginView" class="hidden">
+      <h1>تسجيل الدخول - منظومة آلات السحب الذاتي</h1>
+      <div style="max-width:480px;margin:0 auto">
+        <input id="loginName" placeholder="اسم المستخدم" />
+        <input id="loginPass" placeholder="كلمة المرور" type="password" />
+        <div class="flexrow" style="justify-content:center;margin-top:8px">
+          <button onclick="doLogin()">دخول</button>
+        </div>
+        <p id="loginError" style="color:#ffb3b3;text-align:center;font-weight:700"></p>
+        <p class="note center">صممت بواسطة المهندس / عبدالرحيم غيث الطاهر</p>
+      </div>
+    </div>
+
+    <!-- MAIN - شاشة المسؤول -->
+    <div id="mainView" class="hidden">
+      <div class="topbar">
+        <div>
+          <h2>المنظومة الرئيسية</h2>
+          <div class="note" id="currentUserNote"></div>
+        </div>
+        <div class="flexrow">
+          <button onclick="logout()">تسجيل الخروج</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px" id="menuGrid" class="grid"></div>
+      <div id="sectionsContainer" style="margin-top:18px"></div>
+    </div>
+
+    <!-- USER DASHBOARD - شاشة المستخدم العادي -->
+    <div id="userDashboard" class="hidden">
+      <div class="topbar">
+        <div>
+          <h2>لوحة المستخدم - منظومة آلات السحب الذاتي</h2>
+          <div class="note" id="currentUserNoteDashboard"></div>
+        </div>
+        <div class="flexrow">
+          <button onclick="logout()">تسجيل الخروج</button>
+        </div>
+      </div>
+
+      <div class="user-dashboard">
+        <div class="dashboard-card">
+          <h3>📃 طلب فاتورة جديدة</h3>
+          <div id="userInvoiceForm">
+            <!-- نموذج إضافة القطع -->
+            <div class="multi-invoice-form">
+              <h4>إضافة قطعة جديدة</h4>
+              <div class="form-group">
+                <label>كود القطعة:</label>
+                <input id="userInvPartCode" placeholder="كود القطعة" oninput="userInvAutoFill()" />
+              </div>
+              <div class="form-group">
+                <label>اسم القطعة:</label>
+                <input id="userInvPartName" placeholder="اسم القطعة (يظهر تلقائياً)" readonly />
+              </div>
+              <div class="form-group">
+                <label>الكمية:</label>
+                <input id="userInvQty" type="number" placeholder="الكمية" min="1" />
+              </div>
+              <div class="form-group">
+                <label>آلة السحب:</label>
+                <select id="userInvMachine">
+                  <option value="">اختر آلة السحب</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>تاريخ الطلب:</label>
+                <input id="userInvDate" placeholder="تاريخ الطلب" readonly />
+              </div>
+              <div class="form-actions">
+                <button onclick="addItemToInvoice()">➕ إضافة للفاتورة</button>
+              </div>
+            </div>
+
+            <!-- جدول القطع المضافة -->
+            <div class="table-container">
+              <table class="invoice-items-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>كود القطعة</th>
+                    <th>اسم القطعة</th>
+                    <th>الكمية</th>
+                    <th>آلة السحب</th>
+                    <th>إجراءات</th>
+                  </tr>
+                </thead>
+                <tbody id="invoiceItemsTable">
+                  <!-- سيتم ملؤه ديناميكياً -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- ملخص الفاتورة -->
+            <div class="invoice-summary">
+              <div class="flexrow" style="justify-content: space-between; align-items: center;">
+                <div>
+                  <strong>إجمالي القطع: <span id="totalItemsCount">0</span></strong>
+                </div>
+                <div>
+                  <button onclick="clearInvoiceItems()" class="secondary small">🗑️ مسح الكل</button>
+                  <button onclick="userSendInvoice()" style="margin-left: 10px;">📤 إرسال الفاتورة</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- قسم قطع الغيار بدلاً من الإشعارات -->
+        <div class="dashboard-card">
+          <h3>🔧 قطع الغيار المتاحة</h3>
+          <div class="search-box">
+            <input type="text" id="userPartsSearch" placeholder="🔍 ابحث عن قطعة غيار بالاسم أو الكود..." oninput="filterUserParts()" />
+          </div>
+          <div id="userPartsContainer" style="max-height: 300px; overflow-y: auto;">
+            <div class="notif">
+              <p>جاري تحميل قطع الغيار...</p>
+            </div>
+          </div>
+          <div style="margin-top: 10px; text-align: center;">
+            <button class="small" onclick="openUserPartsView()">📋 عرض جميع القطع</button>
+          </div>
+        </div>
+
+        <div class="dashboard-card" style="grid-column: span 2;">
+          <h3>📋 سجل فواتيري</h3>
+          <div class="table-container">
+            <table id="userInvoicesTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>رقم الفاتورة</th>
+                  <th>عدد القطع</th>
+                  <th>آلة السحب</th>
+                  <th>تاريخ الطلب</th>
+                  <th>الحالة</th>
+                  <th>تفاصيل</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- باقي الأقسام تبقى كما هي -->
+    <!-- BANKS SECTION -->
+    <div id="banksSection" class="hidden section">
+      <h2>🏦 فروع المصارف</h2>
+      <div class="form-container">
+        <div class="flexrow" style="flex-wrap:wrap">
+          <input id="bankNameIn" placeholder="اسم المصرف" />
+          <input id="bankKeyIn" placeholder="مفتاح المصرف" />
+          <button onclick="addBank()">➕ إضافة</button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table id="banksTable">
+          <thead><tr><th>الرقم</th><th>اسم المصرف</th><th>المفتاح</th><th>إجراء</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MACHINES SECTION -->
+    <div id="machinesSection" class="hidden section">
+      <h2>🖥️ آلات السحب</h2>
+      <div class="form-container">
+        <div class="flexrow" style="flex-wrap:wrap">
+          <input id="machineNumberIn" placeholder="رقم الآلة" />
+          <select id="machineBranchIn"><option value="">اختر الفرع</option></select>
+          <button onclick="addMachine()">➕ إضافة</button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table id="machinesTable">
+          <thead><tr><th>#</th><th>رقم الآلة</th><th>الفرع</th><th>مفتاح المصرف</th><th>إجراء</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- USERS SECTION -->
+    <div id="usersSection" class="hidden section">
+      <h2>👥 إدارة المستخدمين</h2>
+      <div class="user-management-container">
+        <div class="user-form-container">
+          <h3>إضافة مستخدم جديد</h3>
+          <div class="form-group">
+            <label>اسم المستخدم:</label>
+            <input id="userNameIn" placeholder="أدخل اسم المستخدم" />
+          </div>
+          <div class="form-group">
+            <label>كلمة المرور:</label>
+            <input id="userPassIn" type="password" placeholder="أدخل كلمة المرور" />
+          </div>
+          <div class="form-group">
+            <label>نوع المستخدم:</label>
+            <select id="userTypeIn">
+              <option value="user">مستخدم عادي</option>
+              <option value="admin">مسؤول نظام</option>
+            </select>
+          </div>
+          <div class="form-group" id="branchField">
+            <label>الفرع التابع له:</label>
+            <select id="userBranchIn">
+              <option value="">اختر الفرع</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button onclick="addUser()">➕ إضافة مستخدم</button>
+          </div>
+        </div>
+        
+        <div class="user-list-container">
+          <h3>قائمة المستخدمين</h3>
+          <div class="table-container">
+            <table id="usersTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>اسم المستخدم</th>
+                  <th>الفرع</th>
+                  <th>نوع المستخدم</th>
+                  <th>تاريخ الإضافة</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARTS SECTION -->
+    <div id="partsSection" class="hidden section">
+      <h2>🔧 إدارة قطع الغيار</h2>
+      <div class="form-container">
+        <h3>إضافة قطعة غيار جديدة</h3>
+        <div class="flexrow" style="flex-wrap: wrap; gap: 10px;">
+          <input id="partCodeIn" placeholder="كود القطعة" />
+          <input id="partNameIn" placeholder="اسم القطعة" />
+          <input id="partQuantityIn" type="number" placeholder="الكمية المخزنة" min="0" />
+          <div class="form-actions">
+            <button onclick="addPart()">➕ إضافة قطعة</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="table-container">
+        <table id="partsTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>كود القطعة</th>
+              <th>اسم القطعة</th>
+              <th>الكمية المخزنة</th>
+              <th>تاريخ الإضافة</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- INVOICES SECTION -->
+    <div id="invoicesSection" class="hidden section">
+      <h2>📃 الفواتير المبدئية</h2>
+
+      <!-- For user: show parts list and invoice form -->
+      <div id="invoiceArea">
+        <div class="form-container">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+            <div style="flex:1;min-width:260px">
+              <h4>قائمة قطع الغيار المتاحة</h4>
+              <div class="table-container" style="max-height: 200px;">
+                <table id="partsListTable">
+                  <thead><tr><th>كود</th><th>الاسم</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div style="flex:1;min-width:260px">
+              <h4>إنشاء فاتورة جديدة</h4>
+              <input id="invPartCode" placeholder="كود القطعة" oninput="invAutoFill()" />
+              <input id="invPartName" placeholder="اسم القطعة (يظهر تلقائياً)" readonly />
+              <input id="invQty" type="number" placeholder="الكمية" min="1" />
+              <input id="invDate" placeholder="تاريخ الطلب" readonly />
+              <select id="invMachine">
+                <option value="">اختر آلة السحب</option>
+              </select>
+              <button onclick="sendInvoice()">📤 إرسال الطلب</button>
+            </div>
+          </div>
+        </div>
+
+        <h4 style="margin-top:12px">سجل فواتيري</h4>
+        <div class="table-container">
+          <table id="myInvoicesTable">
+            <thead><tr><th>#</th><th>كود</th><th>اسم</th><th>كمية</th><th>آلة السحب</th><th>تاريخ</th><th>الحالة</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- For admin: list of all invoices with actions -->
+      <div id="adminInvoiceArea" class="hidden">
+        <h4>طلبات واردة تحتاج للمراجعة</h4>
+        <div id="adminInvoicesList"></div>
+
+        <h4 style="margin-top:12px">سجل الفواتير</h4>
+        <div class="table-container">
+          <table id="adminSavedInvoices">
+            <thead><tr><th>#</th><th>مقدم الطلب</th><th>كود</th><th>اسم</th><th>كمية</th><th>آلة السحب</th><th>تاريخ</th><th>الحالة</th><th>إجراء</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS SECTION -->
+    <div id="notificationsSection" class="hidden section">
+      <h2>🔔 الإشعارات</h2>
+      <div class="table-container">
+        <div id="notificationsContainer"></div>
+      </div>
+    </div>
+
+    <!-- REPORTS SECTION -->
+    <div id="reportsSection" class="hidden section">
+      <button class="back-btn" onclick="backToMain()">⬅ الرجوع للقائمة الرئيسية</button>
+      <h2>📊 التقارير</h2>
+      
+      <div class="report-tabs">
+        <div class="report-tab active" onclick="showReportTab('partsReport')">📦 تقرير قطع الغيار</div>
+        <div class="report-tab" onclick="showReportTab('branchesReport')">🏦 تقارير الفروع</div>
+      </div>
+
+      <!-- تقارير قطع الغيار -->
+      <div id="partsReport" class="report-section">
+        <div class="report-header">
+          <h3>📦 تقرير قطع الغيار</h3>
+          <button onclick="printPartsReport()">🖨️ طباعة التقرير</button>
+        </div>
+        
+        <div class="report-stats">
+          <div class="stat-card">
+            <div>إجمالي القطع</div>
+            <div id="totalPartsCount" style="font-size:1.5rem;font-weight:bold">0</div>
+          </div>
+          <div class="stat-card">
+            <div>إجمالي الكمية</div>
+            <div id="totalPartsQuantity" style="font-size:1.5rem;font-weight:bold">0</div>
+          </div>
+          <div class="stat-card">
+            <div>متوسط الكمية</div>
+            <div id="avgPartsQuantity" style="font-size:1.5rem;font-weight:bold">0</div>
+          </div>
+        </div>
+        
+        <div class="table-container">
+          <table id="partsReportTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>كود القطعة</th>
+                <th>اسم القطعة</th>
+                <th>الكمية الحالية</th>
+                <th>إجمالي المسحوب</th>
+                <th>آخر حركة</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- تقارير الفروع -->
+      <div id="branchesReport" class="report-section hidden">
+        <div class="report-header">
+          <h3>🏦 تقارير الفروع</h3>
+          <button onclick="printBranchesReport()">🖨️ طباعة التقرير</button>
+        </div>
+        
+        <div class="report-stats">
+          <div class="stat-card">
+            <div>إجمالي الفروع</div>
+            <div id="totalBranchesCount" style="font-size:1.5rem;font-weight:bold">0</div>
+          </div>
+          <div class="stat-card">
+            <div>إجمالي الفواتير</div>
+            <div id="totalInvoicesCount" style="font-size:1.5rem;font-weight:bold">0</div>
+          </div>
+          <div class="stat-card">
+            <div>متوسط الفواتير/فرع</div>
+            <div id="avgInvoicesPerBranch" style="font-size:1.5rem;font-weight:bold">0</div>
+          </div>
+        </div>
+        
+        <div class="table-container">
+          <div id="branchesReportContainer"></div>
+        </div>
+
+        <!-- تفاصيل تقارير الفروع -->
+        <div id="branchDetailsContainer" style="margin-top: 20px;"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ==================== المتغيرات العامة ====================
+let currentUser = null;
+let editingUserId = null;
+let selectedPartForQuantity = null;
+let allUserParts = [];
+let invoiceItems = []; // مصفوفة لتخزين قطع الفاتورة
+
+// DOM Elements
+const loginView = document.getElementById('loginView');
+const mainView = document.getElementById('mainView');
+const userDashboard = document.getElementById('userDashboard');
+const menuGrid = document.getElementById('menuGrid');
+const loginError = document.getElementById('loginError');
+
+// ==================== دوال إدارة الفاتورة متعددة القطع ====================
+
+// دالة لإضافة قطعة إلى الفاتورة
+function addItemToInvoice() {
+    const partCode = document.getElementById('userInvPartCode').value.trim();
+    const partName = document.getElementById('userInvPartName').value.trim();
+    const quantity = parseInt(document.getElementById('userInvQty').value) || 0;
+    const machineId = document.getElementById('userInvMachine').value;
+    const date = document.getElementById('userInvDate').value;
+    
+    if (!partCode || !partName || quantity <= 0 || !machineId) {
+        alert('يرجى إكمال جميع البيانات بشكل صحيح');
+        return;
+    }
+
+    // الحصول على اسم الآلة
+    const machineSelect = document.getElementById('userInvMachine');
+    const machineName = machineSelect.options[machineSelect.selectedIndex].text;
+    
+    // إضافة القطعة إلى المصفوفة
+    const newItem = {
+        id: Date.now(), // معرف فريد للقطعة
+        part_code: partCode,
+        part_name: partName,
+        quantity: quantity,
+        machine_id: machineId,
+        machine_name: machineName,
+        date: date
+    };
+    
+    invoiceItems.push(newItem);
+    
+    // تحديث واجهة المستخدم
+    updateInvoiceItemsTable();
+    
+    // مسح الحقول
+    document.getElementById('userInvPartCode').value = '';
+    document.getElementById('userInvPartName').value = '';
+    document.getElementById('userInvQty').value = '';
+}
+
+// دالة لتحديث جدول القطع المضافة
+function updateInvoiceItemsTable() {
+    const tbody = document.getElementById('invoiceItemsTable');
+    const totalItemsElement = document.getElementById('totalItemsCount');
+    
+    tbody.innerHTML = '';
+    
+    if (invoiceItems.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">لا توجد قطع مضافة للفاتورة</td></tr>';
+        totalItemsElement.textContent = '0';
+        return;
+    }
+    
+    invoiceItems.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${item.part_code}</td>
+            <td>${item.part_name}</td>
+            <td>${item.quantity}</td>
+            <td>${item.machine_name}</td>
+            <td class="item-actions">
+                <button class="small danger" onclick="removeInvoiceItem(${item.id})">🗑️ حذف</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+    
+    totalItemsElement.textContent = invoiceItems.length;
+}
+
+// دالة لحذف قطعة من الفاتورة
+function removeInvoiceItem(itemId) {
+    invoiceItems = invoiceItems.filter(item => item.id !== itemId);
+    updateInvoiceItemsTable();
+}
+
+// دالة لمسح جميع القطع من الفاتورة
+function clearInvoiceItems() {
+    if (invoiceItems.length === 0) {
+        return;
+    }
+    
+    if (confirm('هل أنت متأكد من مسح جميع القطع من الفاتورة؟')) {
+        invoiceItems = [];
+        updateInvoiceItemsTable();
+    }
+}
+
+// دالة معدلة لإرسال الفاتورة مع عدة قطع
+async function userSendInvoice() {
+    if (invoiceItems.length === 0) {
+        alert('يرجى إضافة قطعة واحدة على الأقل للفاتورة');
+        return;
+    }
+
+    try {
+        showLoading(true);
+        
+        // إرسال كل قطعة كفاتورة منفصلة
+        const promises = invoiceItems.map(item => 
+            apiCall('invoices.php', 'POST', {
+                part_code: item.part_code,
+                part_name: item.part_name,
+                quantity: item.quantity,
+                date: item.date,
+                machine_id: item.machine_id,
+                user_id: currentUser.id,
+                status: 'pending'
+            })
+        );
+        
+        await Promise.all(promises);
+        
+        // مسح الفاتورة بعد الإرسال الناجح
+        invoiceItems = [];
+        updateInvoiceItemsTable();
+        
+        // إعادة تحميل الفواتير
+        await loadUserInvoices();
+        alert('✅ تم إرسال الفاتورة بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في إرسال الفاتورة: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+// ==================== تهيئة النظام ====================
+async function initializeSystem() {
+    try {
+        showLoading(true);
+        
+        // فحص اتصال قاعدة البيانات
+        const installCheck = await fetch('install.php');
+        const installResult = await installCheck.json();
+        
+        if (!installResult.success) {
+            throw new Error('فشل في تهيئة قاعدة البيانات');
+        }
+        
+        console.log('✅ النظام جاهز للاستخدام');
+        showLoading(false);
+        
+    } catch (error) {
+        console.error('❌ خطأ في تهيئة النظام:', error);
+        showLoading(false);
+        
+        const errorDiv = document.createElement('div');
+        errorDiv.style.background = 'rgba(255,0,0,0.1)';
+        errorDiv.style.padding = '15px';
+        errorDiv.style.borderRadius = '8px';
+        errorDiv.style.margin = '15px 0';
+        errorDiv.style.border = '1px solid red';
+        errorDiv.innerHTML = `
+            <h3>⚠️ خطأ في تهيئة النظام</h3>
+            <p>${error.message}</p>
+            <p><strong>حلول مقترحة:</strong></p>
+            <ul>
+                <li>تأكد من تشغيل خادم الويب (XAMPP, WAMP)</li>
+                <li>تأكد من تشغيل MySQL</li>
+                <li>افتح <a href="install.php" target="_blank">install.php</a> لتهيئة النظام</li>
+            </ul>
+            <button onclick="location.reload()">🔄 إعادة تحميل</button>
+        `;
+        
+        loginView.appendChild(errorDiv);
+    }
+}
+
+// ==================== دوال الاتصال بالخادم ====================
+const API_BASE = './';
+
+async function apiCall(endpoint, method = 'GET', data = null) {
+    try {
+        const options = {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+
+        if (data && (method === 'POST' || method === 'PUT' || method === 'DELETE')) {
+            options.body = JSON.stringify(data);
+        }
+
+        const response = await fetch(API_BASE + endpoint, options);
+        
+        if (!response.ok) {
+            throw new Error(`خطأ في الخادم: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            return result.data;
+        } else {
+            throw new Error(result.message || 'حدث خطأ غير معروف');
+        }
+    } catch (error) {
+        console.error(`❌ خطأ في الاتصال بـ ${endpoint}:`, error);
+        throw error;
+    }
+}
+
+// ==================== نظام تسجيل الدخول ====================
+async function doLogin() {
+    const username = document.getElementById('loginName').value.trim();
+    const password = document.getElementById('loginPass').value.trim();
+    
+    if (!username || !password) {
+        showLoginError('يرجى إدخال اسم المستخدم وكلمة المرور');
+        return;
+    }
+
+    try {
+        showLoading(true);
+        
+        const response = await fetch('login.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                username: username, 
+                password: password 
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            currentUser = result.data;
+            loginView.classList.add('hidden');
+            
+            // تحديد نوع الشاشة بناءً على نوع المستخدم
+            if (currentUser.user_type === 'admin') {
+                mainView.classList.remove('hidden');
+                buildMenu();
+            } else {
+                userDashboard.classList.remove('hidden');
+                await initializeUserDashboard();
+            }
+            
+            showHomeNote();
+        } else {
+            showLoginError(result.message || '❌ اسم المستخدم أو كلمة المرور غير صحيحة');
+        }
+    } catch (error) {
+        console.error('خطأ في الاتصال:', error);
+        showLoginError('❌ خطأ في الاتصال بالخادم. تأكد من تشغيل خادم الويب');
+    } finally {
+        showLoading(false);
+    }
+}
+
+function showLoginError(message) {
+    document.getElementById('loginError').textContent = message;
+}
+
+function clearLoginError() {
+    document.getElementById('loginError').textContent = '';
+}
+
+function logout() { 
+    currentUser = null; 
+    hideAllSections();
+    mainView.classList.add('hidden'); 
+    userDashboard.classList.add('hidden');
+    loginView.classList.remove('hidden'); 
+    document.getElementById('loginName').value = ''; 
+    document.getElementById('loginPass').value = ''; 
+}
+
+// ==================== بناء القائمة الرئيسية ====================
+function buildMenu() {
+    let menuItems = [];
+    
+    if (currentUser.user_type === 'admin') {
+        // القائمة الكاملة للمسؤول
+        menuItems = [
+            { icon: '🏦', text: 'فروع المصارف', onClick: 'openBanks()' },
+            { icon: '🖥️', text: 'آلات السحب', onClick: 'openMachines()' },
+            { icon: '🔧', text: 'قطع الغيار', onClick: 'openParts()' },
+            { icon: '👥', text: 'المستخدمين', onClick: 'openUsers()' },
+            { icon: '📃', text: 'الفواتير', onClick: 'openInvoices()' },
+            { icon: '📊', text: 'التقارير', onClick: 'openReports()' },
+            { icon: '🔔', text: 'الإشعارات', onClick: 'openNotifications()' }
+        ];
+    } else {
+        // القائمة المحدودة للمستخدم العادي
+        menuItems = [
+            { icon: '📃', text: 'طلب فاتورة', onClick: 'openInvoices()' },
+            { icon: '🔧', text: 'قطع الغيار', onClick: 'openParts()' }
+        ];
+    }
+
+    menuGrid.innerHTML = '';
+    
+    menuItems.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'icon';
+        div.innerHTML = `${item.icon}<br>${item.text}`;
+        div.onclick = () => eval(item.onClick);
+        menuGrid.appendChild(div);
+    });
+}
+
+function showHomeNote() {
+    const note = document.getElementById('currentUserNote');
+    if (note) {
+        note.textContent = `مرحباً ${currentUser.username} - ${currentUser.user_type === 'admin' ? 'مسؤول النظام' : 'مستخدم'}`;
+    }
+    
+    const dashboardNote = document.getElementById('currentUserNoteDashboard');
+    if (dashboardNote) {
+        dashboardNote.textContent = `مرحباً ${currentUser.username} - ${currentUser.branch_name || 'مستخدم'}`;
+    }
+}
+
+// ==================== تهيئة لوحة المستخدم العادي ====================
+async function initializeUserDashboard() {
+    // تعيين التاريخ الحالي
+    document.getElementById('userInvDate').value = new Date().toISOString().split('T')[0];
+    
+    // تحميل آلات السحب الخاصة بالفرع
+    await fillUserMachineSelect();
+    
+    // تحميل قطع الغيار
+    await loadUserParts();
+    
+    // تحميل الفواتير
+    await loadUserInvoices();
+    
+    // تهيئة مصفوفة قطع الفاتورة
+    invoiceItems = [];
+    updateInvoiceItemsTable();
+}
+
+// ==================== دوال المستخدم العادي ====================
+async function fillUserMachineSelect() {
+    const select = document.getElementById('userInvMachine');
+    select.innerHTML = '<option value="">اختر آلة السحب</option>';
+    
+    try {
+        const allMachines = await apiCall('machines.php');
+        const userMachines = allMachines.filter(machine => machine.branch_id == currentUser.branch_id);
+        
+        userMachines.forEach(machine => {
+            const option = document.createElement('option');
+            option.value = machine.id;
+            option.textContent = `${machine.machine_number} - ${machine.branch_name}`;
+            select.appendChild(option);
+        });
+        
+        if (userMachines.length === 0) {
+            select.innerHTML = '<option value="">لا توجد آلات سحب متاحة لفرعك</option>';
+        }
+    } catch (error) {
+        console.error('خطأ في تحميل آلات السحب:', error);
+    }
+}
+
+async function userInvAutoFill() {
+    const code = document.getElementById('userInvPartCode').value.trim();
+    const nameInput = document.getElementById('userInvPartName');
+    
+    if (!code) {
+        nameInput.value = '';
+        return;
+    }
+    
+    try {
+        const parts = await apiCall('parts.php');
+        const part = parts.find(p => p.code === code);
+        
+        if (part) {
+            nameInput.value = part.name;
+        } else {
+            nameInput.value = '';
+        }
+    } catch (error) {
+        console.error('خطأ في البحث عن القطعة:', error);
+    }
+}
+
+// ==================== دوال تحميل الفواتير للمستخدم العادي ====================
+async function loadUserInvoices() {
+    const tbody = document.querySelector('#userInvoicesTable tbody'); 
+    tbody.innerHTML = ''; 
+    
+    try {
+        const invoices = await apiCall('invoices.php');
+        const userInvoices = invoices.filter(inv => inv.user_id == currentUser.id);
+        
+        if (userInvoices.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 20px;">لا توجد فواتير مضافة حتى الآن</td></tr>`;
+            return;
+        }
+        
+        // تجميع الفواتير حسب التاريخ والآلة
+        const groupedInvoices = groupInvoicesByDateAndMachine(userInvoices);
+        
+        groupedInvoices.forEach((group, index) => { 
+            const tr = document.createElement('tr'); 
+            const statusClass = `invoice-status-${group.status}`;
+            
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>فاتورة #${group.id}</td>
+                <td>${group.itemsCount} قطع</td>
+                <td>${group.machine_name}</td>
+                <td>${group.date}</td>
+                <td class="${statusClass}">
+                    ${group.status === 'pending' ? '⏳ قيد الانتظار' : 
+                      group.status === 'approved' ? '✅ معتمدة' : '❌ مرفوضة'}
+                </td>
+                <td>
+                    <button class="small" onclick="showInvoiceDetails(${group.id})">📋 التفاصيل</button>
+                </td>
+            `; 
+            tbody.appendChild(tr); 
+        });
+    } catch (error) {
+        console.error('خطأ في تحميل الفواتير:', error);
+    }
+}
+
+// دالة لتجميع الفواتير حسب التاريخ والآلة
+function groupInvoicesByDateAndMachine(invoices) {
+    const groups = {};
+    
+    invoices.forEach(invoice => {
+        const key = `${invoice.date}_${invoice.machine_id}`;
+        
+        if (!groups[key]) {
+            groups[key] = {
+                id: invoice.id,
+                date: invoice.date,
+                machine_id: invoice.machine_id,
+                machine_name: invoice.machine_number,
+                status: invoice.status,
+                itemsCount: 0,
+                items: []
+            };
+        }
+        
+        groups[key].itemsCount++;
+        groups[key].items.push(invoice);
+    });
+    
+    return Object.values(groups);
+}
+
+// دالة لعرض تفاصيل الفاتورة
+function showInvoiceDetails(invoiceId) {
+    // تنفيذ عرض تفاصيل الفاتورة في مودال أو نافذة منبثقة
+    alert('تفاصيل الفاتورة ستظهر هنا في التطبيق الكامل');
+}
+
+// ==================== إدارة قطع الغيار للمستخدم العادي ====================
+async function loadUserParts() {
+    const container = document.getElementById('userPartsContainer');
+    
+    try {
+        const parts = await apiCall('parts.php');
+        allUserParts = parts;
+        
+        if (parts.length === 0) {
+            container.innerHTML = '<div class="notif">لا توجد قطع غيار متاحة حالياً</div>';
+            return;
+        }
+        
+        // عرض القطع مع التصفية (عرض أول 5 قطع فقط في الشاشة الرئيسية)
+        displayUserParts(parts.slice(0, 5));
+    } catch (error) {
+        console.error('خطأ في تحميل قطع الغيار:', error);
+        container.innerHTML = '<div class="notif">خطأ في تحميل قطع الغيار</div>';
+    }
+}
+
+function displayUserParts(parts) {
+    const container = document.getElementById('userPartsContainer');
+    container.innerHTML = '';
+    
+    if (parts.length === 0) {
+        container.innerHTML = '<div class="notif">لا توجد قطع غيار تطابق معايير البحث</div>';
+        return;
+    }
+    
+    parts.forEach(part => {
+        const quantity = parseInt(part.quantity) || 0;
+        const status = getQuantityStatus(quantity);
+        
+        const partCard = document.createElement('div');
+        partCard.className = 'part-card';
+        partCard.innerHTML = `
+            <div class="part-card-header">
+                <strong>${part.name}</strong>
+                <span class="part-code">${part.code}</span>
+            </div>
+            <div class="part-quantity">${quantity} قطعة</div>
+            <div class="quantity-status ${status.class}">${status.text}</div>
+            <div style="margin-top: 10px; font-size: 0.8rem; color: #ccc;">
+                ${part.description || 'لا يوجد وصف'}
+            </div>
+        `;
+        container.appendChild(partCard);
+    });
+}
+
+function getQuantityStatus(quantity) {
+    if (quantity > 10) {
+        return { class: 'status-available', text: 'متاحة' };
+    } else if (quantity > 0) {
+        return { class: 'status-low', text: 'منخفضة' };
+    } else {
+        return { class: 'status-unavailable', text: 'غير متاحة' };
+    }
+}
+
+function filterUserParts() {
+    const searchTerm = document.getElementById('userPartsSearch').value.toLowerCase().trim();
+    
+    if (!searchTerm) {
+        // إرجاع أول 5 قطع فقط للعرض في الشاشة الرئيسية
+        displayUserParts(allUserParts.slice(0, 5));
+        return;
+    }
+    
+    const filteredParts = allUserParts.filter(part => 
+        part.name.toLowerCase().includes(searchTerm) || 
+        part.code.toLowerCase().includes(searchTerm) ||
+        (part.description && part.description.toLowerCase().includes(searchTerm))
+    );
+    
+    // عرض جميع النتائج المطابقة
+    displayUserParts(filteredParts);
+}
+
+// ==================== شاشة قطع الغيار الكاملة للمستخدم العادي ====================
+async function openUserPartsView() {
+    hideAllSections();
+    
+    // إنشاء واجهة عرض قطع الغيار الكاملة للمستخدم العادي
+    const sectionsContainer = document.getElementById('sectionsContainer');
+    sectionsContainer.innerHTML = `
+        <div class="section">
+            <div class="topbar">
+                <h2>🔧 قطع الغيار المتاحة</h2>
+                <button class="back-btn" onclick="backToUserDashboard()">⬅ الرجوع للوحة التحكم</button>
+            </div>
+            
+            <div class="search-box">
+                <input type="text" id="userPartsSearchFull" placeholder="🔍 ابحث عن قطعة غيار بالاسم أو الكود..." oninput="filterUserPartsFull()" />
+            </div>
+            
+            <div class="report-stats">
+                <div class="stat-card">
+                    <div>إجمالي القطع</div>
+                    <div id="userTotalParts" style="font-size:1.5rem;font-weight:bold">0</div>
+                </div>
+                <div class="stat-card">
+                    <div>المتاحة</div>
+                    <div id="userAvailableParts" style="font-size:1.5rem;font-weight:bold;color:#00cc99">0</div>
+                </div>
+                <div class="stat-card">
+                    <div>منخفضة الكمية</div>
+                    <div id="userLowParts" style="font-size:1.5rem;font-weight:bold;color:#ffa500">0</div>
+                </div>
+                <div class="stat-card">
+                    <div>غير متاحة</div>
+                    <div id="userUnavailableParts" style="font-size:1.5rem;font-weight:bold;color:#ff6b6b">0</div>
+                </div>
+            </div>
+            
+            <div id="userPartsViewContainer" class="parts-grid"></div>
+        </div>
+    `;
+    
+    await loadUserPartsView();
+}
+
+async function loadUserPartsView() {
+    const container = document.getElementById('userPartsViewContainer');
+    
+    try {
+        const parts = await apiCall('parts.php');
+        allUserParts = parts;
+        
+        if (parts.length === 0) {
+            container.innerHTML = '<div class="notif">لا توجد قطع غيار متاحة حالياً</div>';
+            return;
+        }
+        
+        // تحديث الإحصائيات
+        updateUserPartsStats(parts);
+        
+        // عرض القطع
+        displayUserPartsView(parts);
+    } catch (error) {
+        console.error('خطأ في تحميل قطع الغيار:', error);
+        container.innerHTML = '<div class="notif">خطأ في تحميل قطع الغيار</div>';
+    }
+}
+
+function updateUserPartsStats(parts) {
+    const total = parts.length;
+    const available = parts.filter(p => (parseInt(p.quantity) || 0) > 10).length;
+    const low = parts.filter(p => {
+        const qty = parseInt(p.quantity) || 0;
+        return qty > 0 && qty <= 10;
+    }).length;
+    const unavailable = parts.filter(p => (parseInt(p.quantity) || 0) === 0).length;
+    
+    document.getElementById('userTotalParts').textContent = total;
+    document.getElementById('userAvailableParts').textContent = available;
+    document.getElementById('userLowParts').textContent = low;
+    document.getElementById('userUnavailableParts').textContent = unavailable;
+}
+
+function displayUserPartsView(parts) {
+    const container = document.getElementById('userPartsViewContainer');
+    container.innerHTML = '';
+    
+    parts.forEach(part => {
+        const quantity = parseInt(part.quantity) || 0;
+        const status = getQuantityStatus(quantity);
+        const lastUpdate = part.updated_at || part.created_at;
+        
+        const partCard = document.createElement('div');
+        partCard.className = 'part-card';
+        partCard.innerHTML = `
+            <div class="part-card-header">
+                <strong>${part.name}</strong>
+                <span class="part-code">${part.code}</span>
+            </div>
+            <div class="part-quantity">${quantity} قطعة</div>
+            <div class="quantity-status ${status.class}">${status.text}</div>
+            <div style="margin-top: 10px; font-size: 0.8rem; color: #ccc;">
+                <div>${part.description || 'لا يوجد وصف'}</div>
+                <div style="margin-top: 5px; font-size: 0.7rem; opacity: 0.7;">
+                    آخر تحديث: ${formatDate(lastUpdate)}
+                </div>
+            </div>
+        `;
+        container.appendChild(partCard);
+    });
+}
+
+function filterUserPartsFull() {
+    const searchTerm = document.getElementById('userPartsSearchFull').value.toLowerCase().trim();
+    
+    if (!searchTerm) {
+        displayUserPartsView(allUserParts);
+        return;
+    }
+    
+    const filteredParts = allUserParts.filter(part => 
+        part.name.toLowerCase().includes(searchTerm) || 
+        part.code.toLowerCase().includes(searchTerm) ||
+        (part.description && part.description.toLowerCase().includes(searchTerm))
+    );
+    
+    displayUserPartsView(filteredParts);
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'غير معروف';
+    
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ar-SA');
+}
+
+function backToUserDashboard() {
+    hideAllSections();
+    userDashboard.classList.remove('hidden');
+}
+
+// ==================== إدارة المصارف ====================
+async function openBanks() { 
+    hideAllSections(); 
+    document.getElementById('banksSection').classList.remove('hidden'); 
+    await renderBanks(); 
+}
+
+async function renderBanks() { 
+    const tbody = document.querySelector('#banksTable tbody'); 
+    tbody.innerHTML = ''; 
+    
+    try {
+        showLoading(true);
+        const banks = await apiCall('banks.php');
+        
+        if (banks.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 20px;">لا توجد مصارف مضافة حتى الآن</td></tr>`;
+            return;
+        }
+        
+        banks.forEach((bank, index) => { 
+            const tr = document.createElement('tr'); 
+            tr.innerHTML = `
+                <td>${bank.id}</td>
+                <td>${bank.name}</td>
+                <td>${bank.bank_key}</td>
+                <td>
+                    <button onclick="deleteBank(${bank.id})" class="small danger">🗑️ حذف</button>
+                </td>
+            `; 
+            tbody.appendChild(tr); 
+        });
+    } catch (error) {
+        alert('❌ خطأ في تحميل بيانات المصارف: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function addBank() { 
+    const name = document.getElementById('bankNameIn').value.trim(); 
+    const key = document.getElementById('bankKeyIn').value.trim(); 
+    
+    if (!name || !key) {
+        alert('يرجى إكمال جميع البيانات');
+        return;
+    }
+
+    try {
+        showLoading(true);
+        await apiCall('banks.php', 'POST', { name, key });
+        document.getElementById('bankNameIn').value = '';
+        document.getElementById('bankKeyIn').value = '';
+        await renderBanks();
+        alert('✅ تم إضافة المصرف بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في إضافة المصرف: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function deleteBank(id) {
+    if (!confirm('هل أنت متأكد من حذف هذا المصرف؟')) return;
+    
+    try {
+        showLoading(true);
+        await apiCall(`banks.php?id=${id}`, 'DELETE');
+        await renderBanks();
+        alert('✅ تم حذف المصرف بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في حذف المصرف: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+// ==================== إدارة آلات السحب ====================
+async function openMachines() { 
+    hideAllSections(); 
+    document.getElementById('machinesSection').classList.remove('hidden'); 
+    await renderMachines(); 
+    await fillBranchSelects();
+}
+
+async function renderMachines() {
+    const tbody = document.querySelector('#machinesTable tbody'); 
+    tbody.innerHTML = ''; 
+    
+    try {
+        showLoading(true);
+        const machines = await apiCall('machines.php');
+        
+        if (machines.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px;">لا توجد آلات سحب مضافة حتى الآن</td></tr>`;
+            return;
+        }
+        
+        machines.forEach((machine, index) => { 
+            const tr = document.createElement('tr'); 
+            tr.innerHTML = `
+                <td>${machine.id}</td>
+                <td>${machine.machine_number}</td>
+                <td>${machine.branch_name || ''}</td>
+                <td>${machine.bank_key || ''}</td>
+                <td>
+                    <button onclick="deleteMachine(${machine.id})" class="small danger">🗑️ حذف</button>
+                </td>
+            `; 
+            tbody.appendChild(tr); 
+        });
+    } catch (error) {
+        alert('❌ خطأ في تحميل بيانات آلات السحب: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function fillBranchSelects() {
+    const selects = document.querySelectorAll('#machineBranchIn');
+    
+    try {
+        const banks = await apiCall('banks.php');
+        
+        selects.forEach(select => {
+            const currentValue = select.value;
+            select.innerHTML = '<option value="">اختر الفرع</option>';
+            
+            banks.forEach(bank => {
+                const option = document.createElement('option');
+                option.value = bank.id;
+                option.textContent = bank.name;
+                option.dataset.key = bank.bank_key;
+                select.appendChild(option);
+            });
+            
+            if (currentValue) {
+                select.value = currentValue;
+            }
+        });
+    } catch (error) {
+        console.error('خطأ في تحميل الفروع:', error);
+    }
+}
+
+async function addMachine() {
+    const machineNumber = document.getElementById('machineNumberIn').value.trim();
+    const branchId = document.getElementById('machineBranchIn').value;
+    
+    if (!machineNumber || !branchId) {
+        alert('يرجى إكمال جميع البيانات');
+        return;
+    }
+
+    try {
+        showLoading(true);
+        await apiCall('machines.php', 'POST', { machine_number: machineNumber, branch_id: branchId });
+        document.getElementById('machineNumberIn').value = '';
+        document.getElementById('machineBranchIn').value = '';
+        await renderMachines();
+        alert('✅ تم إضافة آلة السحب بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في إضافة آلة السحب: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function deleteMachine(machineId) {
+    if (!confirm('هل أنت متأكد من حذف هذه الآلة؟')) return;
+    
+    try {
+        showLoading(true);
+        await apiCall(`machines.php?id=${machineId}`, 'DELETE');
+        await renderMachines();
+        alert('✅ تم حذف الآلة بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في حذف الآلة: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+// ==================== إدارة المستخدمين ====================
+async function openUsers() { 
+    hideAllSections(); 
+    document.getElementById('usersSection').classList.remove('hidden'); 
+    await renderUsers(); 
+    await fillBranchesForUsers();
+}
+
+async function renderUsers() {
+    const tbody = document.querySelector('#usersTable tbody'); 
+    tbody.innerHTML = ''; 
+    
+    try {
+        showLoading(true);
+        const users = await apiCall('users.php');
+        
+        if (users.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 20px;">لا توجد مستخدمين مضافة حتى الآن</td></tr>`;
+            return;
+        }
+        
+        users.forEach((user, index) => { 
+            const tr = document.createElement('tr'); 
+            const userTypeClass = user.user_type === 'admin' ? 'user-type-admin' : 'user-type-user';
+            
+            tr.innerHTML = `
+                <td>${user.id}</td>
+                <td>${user.username}</td>
+                <td>${user.branch_name || 'لا يوجد'}</td>
+                <td>
+                    <span class="user-type-badge ${userTypeClass}">
+                        ${user.user_type === 'admin' ? 'مسؤول' : 'مستخدم'}
+                    </span>
+                </td>
+                <td>${user.created_at}</td>
+                <td>
+                    <button onclick="editUser(${user.id})" class="small">✏️ تعديل</button>
+                    <button onclick="deleteUser(${user.id})" class="small danger">🗑️ حذف</button>
+                </td>
+            `; 
+            tbody.appendChild(tr); 
+        });
+    } catch (error) {
+        alert('❌ خطأ في تحميل بيانات المستخدمين: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function fillBranchesForUsers() {
+    const select = document.getElementById('userBranchIn');
+    
+    try {
+        const banks = await apiCall('banks.php');
+        
+        select.innerHTML = '<option value="">اختر الفرع</option>';
+        
+        banks.forEach(bank => {
+            const option = document.createElement('option');
+            option.value = bank.id;
+            option.textContent = bank.name;
+            select.appendChild(option);
+        });
+    } catch (error) {
+        console.error('خطأ في تحميل الفروع:', error);
+    }
+}
+
+async function addUser() {
+    const username = document.getElementById('userNameIn').value.trim();
+    const password = document.getElementById('userPassIn').value.trim();
+    const userType = document.getElementById('userTypeIn').value;
+    const branchId = document.getElementById('userBranchIn').value;
+    
+    if (!username || !password || !userType) {
+        alert('يرجى إكمال جميع البيانات الإجبارية');
+        return;
+    }
+
+    // إذا كان المستخدم عادي، يجب اختيار فرع
+    if (userType === 'user' && !branchId) {
+        alert('يرجى اختيار فرع للمستخدم العادي');
+        return;
+    }
+
+    try {
+        showLoading(true);
+        await apiCall('users.php', 'POST', {
+            username: username,
+            password: password,
+            user_type: userType,
+            branch_id: userType === 'admin' ? null : branchId
+        });
+        
+        // مسح النموذج
+        document.getElementById('userNameIn').value = '';
+        document.getElementById('userPassIn').value = '';
+        document.getElementById('userTypeIn').value = 'user';
+        document.getElementById('userBranchIn').value = '';
+        
+        await renderUsers();
+        alert('✅ تم إضافة المستخدم بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في إضافة المستخدم: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function editUser(userId) {
+    try {
+        showLoading(true);
+        const users = await apiCall('users.php');
+        const user = users.find(u => u.id === userId);
+        
+        if (!user) {
+            alert('المستخدم غير موجود');
+            return;
+        }
+        
+        // تعبئة النموذج بالبيانات الحالية
+        document.getElementById('userNameIn').value = user.username;
+        document.getElementById('userTypeIn').value = user.user_type;
+        document.getElementById('userBranchIn').value = user.branch_id || '';
+        
+        // تغيير نص زر الإضافة
+        const addButton = document.querySelector('#usersSection button[onclick="addUser()"]');
+        const originalText = addButton.textContent;
+        addButton.textContent = '💾 حفظ التعديلات';
+        addButton.onclick = function() { updateUser(userId); };
+        
+        // إضافة زر إلغاء
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = '❌ إلغاء';
+        cancelButton.className = 'secondary';
+        cancelButton.onclick = function() {
+            resetUserForm();
+            addButton.textContent = originalText;
+            addButton.onclick = function() { addUser(); };
+            cancelButton.remove();
+        };
+        
+        document.querySelector('#usersSection .form-actions').appendChild(cancelButton);
+        
+        editingUserId = userId;
+        
+    } catch (error) {
+        alert('❌ خطأ في تحميل بيانات المستخدم: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function updateUser(userId) {
+    const username = document.getElementById('userNameIn').value.trim();
+    const password = document.getElementById('userPassIn').value.trim();
+    const userType = document.getElementById('userTypeIn').value;
+    const branchId = document.getElementById('userBranchIn').value;
+    
+    if (!username || !userType) {
+        alert('يرجى إكمال جميع البيانات الإجبارية');
+        return;
+    }
+
+    if (userType === 'user' && !branchId) {
+        alert('يرجى اختيار فرع للمستخدم العادي');
+        return;
+    }
+
+    try {
+        showLoading(true);
+        const updateData = {
+            username: username,
+            user_type: userType,
+            branch_id: userType === 'admin' ? null : branchId
+        };
+        
+        // إذا تم إدخال كلمة مرور جديدة، أضفها للبيانات
+        if (password) {
+            updateData.password = password;
+        }
+        
+        await apiCall(`users.php?id=${userId}`, 'PUT', updateData);
+        
+        resetUserForm();
+        await renderUsers();
+        alert('✅ تم تحديث المستخدم بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في تحديث المستخدم: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+function resetUserForm() {
+    document.getElementById('userNameIn').value = '';
+    document.getElementById('userPassIn').value = '';
+    document.getElementById('userTypeIn').value = 'user';
+    document.getElementById('userBranchIn').value = '';
+    
+    const addButton = document.querySelector('#usersSection button[onclick="updateUser()"]');
+    if (addButton) {
+        addButton.textContent = '➕ إضافة مستخدم';
+        addButton.onclick = function() { addUser(); };
+    }
+    
+    const cancelButton = document.querySelector('#usersSection .form-actions button.secondary');
+    if (cancelButton) {
+        cancelButton.remove();
+    }
+    
+    editingUserId = null;
+}
+
+async function deleteUser(userId) {
+    if (userId === currentUser.id) {
+        alert('❌ لا يمكن حذف حسابك الشخصي');
+        return;
+    }
+    
+    if (!confirm('هل أنت متأكد من حذف هذا المستخدم؟')) return;
+    
+    try {
+        showLoading(true);
+        await apiCall(`users.php?id=${userId}`, 'DELETE');
+        await renderUsers();
+        alert('✅ تم حذف المستخدم بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في حذف المستخدم: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+// ==================== إدارة قطع الغيار ====================
+async function openParts() { 
+    hideAllSections(); 
+    document.getElementById('partsSection').classList.remove('hidden'); 
+    await renderParts(); 
+}
+
+async function renderParts() {
+    const tbody = document.querySelector('#partsTable tbody'); 
+    tbody.innerHTML = ''; 
+    
+    try {
+        showLoading(true);
+        const parts = await apiCall('parts.php');
+        
+        if (parts.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 20px;">لا توجد قطع غيار مضافة حتى الآن</td></tr>`;
+            return;
+        }
+        
+        parts.forEach((part, index) => { 
+            const tr = document.createElement('tr'); 
+            tr.innerHTML = `
+                <td>${part.id}</td>
+                <td>${part.code}</td>
+                <td>${part.name}</td>
+                <td>${part.quantity || 0}</td>
+                <td>${part.created_at}</td>
+                <td>
+                    <button onclick="editPart(${part.id})" class="small">✏️ تعديل</button>
+                    <button onclick="deletePart(${part.id})" class="small danger">🗑️ حذف</button>
+                </td>
+            `; 
+            tbody.appendChild(tr); 
+        });
+    } catch (error) {
+        alert('❌ خطأ في تحميل بيانات قطع الغيار: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function addPart() {
+    const code = document.getElementById('partCodeIn').value.trim();
+    const name = document.getElementById('partNameIn').value.trim();
+    const quantity = parseInt(document.getElementById('partQuantityIn').value) || 0;
+    
+    if (!code || !name) {
+        alert('يرجى إكمال جميع البيانات الإجبارية');
+        return;
+    }
+
+    try {
+        showLoading(true);
+        await apiCall('parts.php', 'POST', {
+            code: code,
+            name: name,
+            quantity: quantity
+        });
+        
+        // مسح النموذج
+        document.getElementById('partCodeIn').value = '';
+        document.getElementById('partNameIn').value = '';
+        document.getElementById('partQuantityIn').value = '';
+        
+        await renderParts();
+        alert('✅ تم إضافة قطعة الغيار بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في إضافة قطعة الغيار: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function editPart(partId) {
+    try {
+        showLoading(true);
+        const parts = await apiCall('parts.php');
+        const part = parts.find(p => p.id === partId);
+        
+        if (!part) {
+            alert('قطعة الغيار غير موجودة');
+            return;
+        }
+        
+        // تعبئة النموذج بالبيانات الحالية
+        document.getElementById('partCodeIn').value = part.code;
+        document.getElementById('partNameIn').value = part.name;
+        document.getElementById('partQuantityIn').value = part.quantity || '';
+        
+        // تغيير نص زر الإضافة
+        const addButton = document.querySelector('#partsSection button[onclick="addPart()"]');
+        const originalText = addButton.textContent;
+        addButton.textContent = '💾 حفظ التعديلات';
+        addButton.onclick = function() { updatePart(partId); };
+        
+        // إضافة زر إلغاء
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = '❌ إلغاء';
+        cancelButton.className = 'secondary';
+        cancelButton.onclick = function() {
+            resetPartForm();
+            addButton.textContent = originalText;
+            addButton.onclick = function() { addPart(); };
+            cancelButton.remove();
+        };
+        
+        document.querySelector('#partsSection .form-actions').appendChild(cancelButton);
+        
+    } catch (error) {
+        alert('❌ خطأ في تحميل بيانات قطعة الغيار: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function updatePart(partId) {
+    const code = document.getElementById('partCodeIn').value.trim();
+    const name = document.getElementById('partNameIn').value.trim();
+    const quantity = parseInt(document.getElementById('partQuantityIn').value) || 0;
+    
+    if (!code || !name) {
+        alert('يرجى إكمال جميع البيانات الإجبارية');
+        return;
+    }
+
+    try {
+        showLoading(true);
+        await apiCall(`parts.php?id=${partId}`, 'PUT', {
+            code: code,
+            name: name,
+            quantity: quantity
+        });
+        
+        resetPartForm();
+        await renderParts();
+        alert('✅ تم تحديث قطعة الغيار بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في تحديث قطعة الغيار: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+function resetPartForm() {
+    document.getElementById('partCodeIn').value = '';
+    document.getElementById('partNameIn').value = '';
+    document.getElementById('partQuantityIn').value = '';
+    
+    const addButton = document.querySelector('#partsSection button[onclick="updatePart()"]');
+    if (addButton) {
+        addButton.textContent = '➕ إضافة قطعة';
+        addButton.onclick = function() { addPart(); };
+    }
+    
+    const cancelButton = document.querySelector('#partsSection .form-actions button.secondary');
+    if (cancelButton) {
+        cancelButton.remove();
+    }
+}
+
+async function deletePart(partId) {
+    if (!confirm('هل أنت متأكد من حذف قطعة الغيار هذه؟')) return;
+    
+    try {
+        showLoading(true);
+        await apiCall(`parts.php?id=${partId}`, 'DELETE');
+        await renderParts();
+        alert('✅ تم حذف قطعة الغيار بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في حذف قطعة الغيار: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+// ==================== إدارة الفواتير ====================
+async function openInvoices() { 
+    hideAllSections(); 
+    document.getElementById('invoicesSection').classList.remove('hidden'); 
+    await renderInvoices(); 
+}
+
+async function renderInvoices() {
+    await renderPartsList();
+    await fillMachineSelect();
+    
+    if (currentUser.user_type === 'admin') {
+        document.getElementById('invoiceArea').classList.add('hidden');
+        document.getElementById('adminInvoiceArea').classList.remove('hidden');
+        await renderAdminInvoices();
+        await renderAdminSavedInvoices();
+    } else {
+        document.getElementById('invoiceArea').classList.remove('hidden');
+        document.getElementById('adminInvoiceArea').classList.add('hidden');
+        await renderMyInvoices();
+    }
+    
+    // تعيين التاريخ الحالي تلقائياً
+    document.getElementById('invDate').value = new Date().toISOString().split('T')[0];
+}
+
+async function renderPartsList() {
+    const tbody = document.querySelector('#partsListTable tbody'); 
+    tbody.innerHTML = ''; 
+    
+    try {
+        const parts = await apiCall('parts.php');
+        
+        parts.forEach((part, index) => { 
+            const tr = document.createElement('tr'); 
+            tr.innerHTML = `
+                <td>${part.code}</td>
+                <td>${part.name}</td>
+            `; 
+            tbody.appendChild(tr); 
+        });
+    } catch (error) {
+        console.error('خطأ في تحميل قائمة قطع الغيار:', error);
+    }
+}
+
+async function fillMachineSelect() {
+    const select = document.getElementById('invMachine');
+    select.innerHTML = '<option value="">اختر آلة السحب</option>';
+    
+    try {
+        let machines = [];
+        
+        if (currentUser.user_type === 'admin') {
+            machines = await apiCall('machines.php');
+        } else {
+            const allMachines = await apiCall('machines.php');
+            machines = allMachines.filter(machine => machine.branch_id == currentUser.branch_id);
+        }
+        
+        machines.forEach(machine => {
+            const option = document.createElement('option');
+            option.value = machine.id;
+            option.textContent = `${machine.machine_number} - ${machine.branch_name}`;
+            select.appendChild(option);
+        });
+        
+        if (machines.length === 0 && currentUser.user_type === 'user') {
+            select.innerHTML = '<option value="">لا توجد آلات سحب متاحة لفرعك</option>';
+        }
+    } catch (error) {
+        console.error('خطأ في تحميل آلات السحب:', error);
+    }
+}
+
+async function invAutoFill() {
+    const code = document.getElementById('invPartCode').value.trim();
+    const nameInput = document.getElementById('invPartName');
+    
+    if (!code) {
+        nameInput.value = '';
+        return;
+    }
+    
+    try {
+        const parts = await apiCall('parts.php');
+        const part = parts.find(p => p.code === code);
+        
+        if (part) {
+            nameInput.value = part.name;
+        } else {
+            nameInput.value = '';
+        }
+    } catch (error) {
+        console.error('خطأ في البحث عن القطعة:', error);
+    }
+}
+
+async function sendInvoice() {
+    const partCode = document.getElementById('invPartCode').value.trim();
+    const partName = document.getElementById('invPartName').value.trim();
+    const quantity = parseInt(document.getElementById('invQty').value) || 0;
+    const date = document.getElementById('invDate').value;
+    const machineId = document.getElementById('invMachine').value;
+    
+    if (!partCode || !partName || quantity <= 0 || !date || !machineId) {
+        alert('يرجى إكمال جميع البيانات بشكل صحيح');
+        return;
+    }
+
+    try {
+        showLoading(true);
+        await apiCall('invoices.php', 'POST', {
+            part_code: partCode,
+            part_name: partName,
+            quantity: quantity,
+            date: date,
+            machine_id: machineId,
+            user_id: currentUser.id,
+            status: 'pending'
+        });
+        
+        // مسح النموذج
+        document.getElementById('invPartCode').value = '';
+        document.getElementById('invPartName').value = '';
+        document.getElementById('invQty').value = '';
+        document.getElementById('invMachine').value = '';
+        
+        await renderInvoices();
+        alert('✅ تم إرسال الطلب بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في إرسال الطلب: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function renderMyInvoices() {
+    const tbody = document.querySelector('#myInvoicesTable tbody'); 
+    tbody.innerHTML = ''; 
+    
+    try {
+        const invoices = await apiCall('invoices.php');
+        const myInvoices = invoices.filter(inv => inv.user_id == currentUser.id);
+        
+        if (myInvoices.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 20px;">لا توجد فواتير مضافة حتى الآن</td></tr>`;
+            return;
+        }
+        
+        myInvoices.forEach((invoice, index) => { 
+            const tr = document.createElement('tr'); 
+            const statusClass = `invoice-status-${invoice.status}`;
+            
+            tr.innerHTML = `
+                <td>${invoice.id}</td>
+                <td>${invoice.part_code}</td>
+                <td>${invoice.part_name}</td>
+                <td>${invoice.quantity}</td>
+                <td>${invoice.machine_number || ''}</td>
+                <td>${invoice.date}</td>
+                <td class="${statusClass}">
+                    ${invoice.status === 'pending' ? '⏳ قيد الانتظار' : 
+                      invoice.status === 'approved' ? '✅ معتمدة' : '❌ مرفوضة'}
+                </td>
+            `; 
+            tbody.appendChild(tr); 
+        });
+    } catch (error) {
+        console.error('خطأ في تحميل الفواتير:', error);
+    }
+}
+
+async function renderAdminInvoices() {
+    const container = document.getElementById('adminInvoicesList');
+    container.innerHTML = '';
+    
+    try {
+        const invoices = await apiCall('invoices.php');
+        const pendingInvoices = invoices.filter(inv => inv.status === 'pending');
+        
+        if (pendingInvoices.length === 0) {
+            container.innerHTML = '<div class="notif">لا توجد طلبات جديدة تحتاج للمراجعة</div>';
+            return;
+        }
+        
+        pendingInvoices.forEach(invoice => {
+            const div = document.createElement('div');
+            div.className = 'notif';
+            div.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <strong>طلب من: ${invoice.username}</strong><br>
+                        <small>القطعة: ${invoice.part_name} (${invoice.part_code}) - الكمية: ${invoice.quantity}</small><br>
+                        <small>آلة السحب: ${invoice.machine_number} - التاريخ: ${invoice.date}</small>
+                    </div>
+                    <div class="flexrow">
+                        <button class="small" onclick="approveInvoice(${invoice.id})">✅ قبول</button>
+                        <button class="small danger" onclick="rejectInvoice(${invoice.id})">❌ رفض</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    } catch (error) {
+        console.error('خطأ في تحميل الطلبات:', error);
+    }
+}
+
+async function renderAdminSavedInvoices() {
+    const tbody = document.querySelector('#adminSavedInvoices tbody'); 
+    tbody.innerHTML = ''; 
+    
+    try {
+        const invoices = await apiCall('invoices.php');
+        
+        if (invoices.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 20px;">لا توجد فواتير مسجلة</td></tr>`;
+            return;
+        }
+        
+        invoices.forEach((invoice, index) => { 
+            const tr = document.createElement('tr'); 
+            const statusClass = `invoice-status-${invoice.status}`;
+            
+            tr.innerHTML = `
+                <td>${invoice.id}</td>
+                <td>${invoice.username}</td>
+                <td>${invoice.part_code}</td>
+                <td>${invoice.part_name}</td>
+                <td>${invoice.quantity}</td>
+                <td>${invoice.machine_number || ''}</td>
+                <td>${invoice.date}</td>
+                <td class="${statusClass}">
+                    ${invoice.status === 'pending' ? '⏳ قيد الانتظار' : 
+                      invoice.status === 'approved' ? '✅ معتمدة' : '❌ مرفوضة'}
+                </td>
+                <td>
+                    ${invoice.status === 'pending' ? `
+                        <button class="small" onclick="approveInvoice(${invoice.id})">✅ قبول</button>
+                        <button class="small danger" onclick="rejectInvoice(${invoice.id})">❌ رفض</button>
+                    ` : `
+                        <button class="small secondary" onclick="deleteInvoice(${invoice.id})">🗑️ حذف</button>
+                    `}
+                </td>
+            `; 
+            tbody.appendChild(tr); 
+        });
+    } catch (error) {
+        console.error('خطأ في تحميل الفواتير:', error);
+    }
+}
+
+async function approveInvoice(invoiceId) {
+    if (!confirm('هل تريد قبول هذا الطلب؟')) return;
+    
+    try {
+        showLoading(true);
+        await apiCall(`invoices.php?id=${invoiceId}`, 'PUT', { status: 'approved' });
+        await renderInvoices();
+        alert('✅ تم قبول الطلب بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في قبول الطلب: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function rejectInvoice(invoiceId) {
+    if (!confirm('هل تريد رفض هذا الطلب؟')) return;
+    
+    try {
+        showLoading(true);
+        await apiCall(`invoices.php?id=${invoiceId}`, 'PUT', { status: 'rejected' });
+        await renderInvoices();
+        alert('✅ تم رفض الطلب بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في رفض الطلب: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function deleteInvoice(invoiceId) {
+    if (!confirm('هل أنت متأكد من حذف هذه الفاتورة؟')) return;
+    
+    try {
+        showLoading(true);
+        await apiCall(`invoices.php?id=${invoiceId}`, 'DELETE');
+        await renderInvoices();
+        alert('✅ تم حذف الفاتورة بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في حذف الفاتورة: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+// ==================== إدارة الإشعارات ====================
+async function openNotifications() { 
+    hideAllSections(); 
+    document.getElementById('notificationsSection').classList.remove('hidden'); 
+    await renderNotifications(); 
+}
+
+async function renderNotifications() {
+    const container = document.getElementById('notificationsContainer');
+    container.innerHTML = '';
+    
+    try {
+        const notifications = await apiCall('notifications.php');
+        
+        if (notifications.length === 0) {
+            container.innerHTML = '<div class="notif">لا توجد إشعارات جديدة</div>';
+            return;
+        }
+        
+        notifications.forEach(notification => {
+            const div = document.createElement('div');
+            div.className = 'notif';
+            div.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
+                    <div style="flex: 1;">
+                        <strong>${notification.title}</strong>
+                        <p>${notification.message}</p>
+                        <small>${notification.created_at}</small>
+                    </div>
+                    ${currentUser.user_type === 'admin' ? `
+                        <button class="small danger" onclick="deleteNotification(${notification.id})">🗑️ حذف</button>
+                    ` : ''}
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    } catch (error) {
+        console.error('خطأ في تحميل الإشعارات:', error);
+        container.innerHTML = '<div class="notif">خطأ في تحميل الإشعارات</div>';
+    }
+}
+
+async function deleteNotification(notificationId) {
+    if (!confirm('هل تريد حذف هذا الإشعار؟')) return;
+    
+    try {
+        showLoading(true);
+        await apiCall(`notifications.php?id=${notificationId}`, 'DELETE');
+        await renderNotifications();
+        alert('✅ تم حذف الإشعار بنجاح');
+    } catch (error) {
+        alert('❌ خطأ في حذف الإشعار: ' + error.message);
+    } finally {
+        showLoading(false);
+    }
+}
+
+// ==================== نظام التقارير ====================
+async function openReports() { 
+    hideAllSections(); 
+    document.getElementById('reportsSection').classList.remove('hidden'); 
+    await loadReportsData();
+}
+
+function showReportTab(tabName) {
+    // إخفاء جميع التبويبات
+    document.querySelectorAll('.report-section').forEach(section => {
+        section.classList.add('hidden');
+    });
+    
+    // إزالة النشاط من جميع التبويبات
+    document.querySelectorAll('.report-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // إظهار التبويب المحدد
+    document.getElementById(tabName).classList.remove('hidden');
+    
+    // إضافة النشاط للتبويب المحدد
+    event.target.classList.add('active');
+}
+
+async function loadReportsData() {
+    await loadPartsReport();
+    await loadBranchesReport();
+}
+
+async function loadPartsReport() {
+    try {
+        showLoading(true);
+        const parts = await apiCall('parts.php');
+        const invoices = await apiCall('invoices.php');
+        
+        // حساب الإحصائيات
+        const totalParts = parts.length;
+        const totalQuantity = parts.reduce((sum, part) => sum + (parseInt(part.quantity) || 0), 0);
+        const avgQuantity = totalParts > 0 ? (totalQuantity / totalParts).toFixed(1) : 0;
+        
+        document.getElementById('totalPartsCount').textContent = totalParts;
+        document.getElementById('totalPartsQuantity').textContent = totalQuantity;
+        document.getElementById('avgPartsQuantity').textContent = avgQuantity;
+        
+        // ملء جدول التقرير
+        const tbody = document.querySelector('#partsReportTable tbody');
+        tbody.innerHTML = '';
+        
+        parts.forEach((part, index) => {
+            const partInvoices = invoices.filter(inv => inv.part_code === part.code && inv.status === 'approved');
+            const totalWithdrawn = partInvoices.reduce((sum, inv) => sum + (parseInt(inv.quantity) || 0), 0);
+            const lastActivity = partInvoices.length > 0 ? 
+                partInvoices[partInvoices.length - 1].date : 'لا توجد حركات';
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${part.code}</td>
+                <td>${part.name}</td>
+                <td>${part.quantity || 0}</td>
+                <td>${totalWithdrawn}</td>
+                <td>${lastActivity}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+        
+    } catch (error) {
+        console.error('خطأ في تحميل تقرير قطع الغيار:', error);
+        alert('❌ خطأ في تحميل تقرير قطع الغيار');
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function loadBranchesReport() {
+    try {
+        showLoading(true);
+        const banks = await apiCall('banks.php');
+        const machines = await apiCall('machines.php');
+        const invoices = await apiCall('invoices.php');
+        
+        // حساب الإحصائيات
+        const totalBranches = banks.length;
+        const totalInvoices = invoices.length;
+        const avgInvoicesPerBranch = totalBranches > 0 ? (totalInvoices / totalBranches).toFixed(1) : 0;
+        
+        document.getElementById('totalBranchesCount').textContent = totalBranches;
+        document.getElementById('totalInvoicesCount').textContent = totalInvoices;
+        document.getElementById('avgInvoicesPerBranch').textContent = avgInvoicesPerBranch;
+        
+        // إنشاء تقرير الفروع
+        const container = document.getElementById('branchesReportContainer');
+        container.innerHTML = '';
+        
+        if (banks.length === 0) {
+            container.innerHTML = '<div class="notif">لا توجد فروع مضافة حتى الآن</div>';
+            return;
+        }
+        
+        banks.forEach(bank => {
+            const bankMachines = machines.filter(m => m.branch_id == bank.id);
+            const bankInvoices = invoices.filter(inv => {
+                const machine = machines.find(m => m.id == inv.machine_id);
+                return machine && machine.branch_id == bank.id;
+            });
+            
+            const approvedInvoices = bankInvoices.filter(inv => inv.status === 'approved');
+            const pendingInvoices = bankInvoices.filter(inv => inv.status === 'pending');
+            
+            // حساب إجمالي قطع الغيار المستخدمة
+            const totalPartsUsed = approvedInvoices.reduce((sum, inv) => sum + (parseInt(inv.quantity) || 0), 0);
+            
+            // حساب عدد الآلات التي تمت صيانتها
+            const maintainedMachines = bankMachines.filter(machine => {
+                const machineInvoices = bankInvoices.filter(inv => inv.machine_id == machine.id && inv.status === 'approved');
+                return machineInvoices.length > 0;
+            });
+            
+            const branchDiv = document.createElement('div');
+            branchDiv.className = 'branch-report-details';
+            branchDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <h4>${bank.name}</h4>
+                        <p>مفتاح المصرف: ${bank.bank_key}</p>
+                    </div>
+                    <div class="flexrow">
+                        <button class="small" onclick="showBranchDetails(${bank.id})">📊 تفاصيل الفرع</button>
+                    </div>
+                </div>
+                <div class="report-stats" style="margin: 10px 0;">
+                    <div class="stat-card">
+                        <div>عدد الآلات</div>
+                        <div style="font-size: 1.2rem; font-weight: bold;">${bankMachines.length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div>الفواتير المعتمدة</div>
+                        <div style="font-size: 1.2rem; font-weight: bold; color: #00cc99;">${approvedInvoices.length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div>الفواتير المعلقة</div>
+                        <div style="font-size: 1.2rem; font-weight: bold; color: #ffa500;">${pendingInvoices.length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div>الآلات المخدمة</div>
+                        <div style="font-size: 1.2rem; font-weight: bold;">${maintainedMachines.length}/${bankMachines.length}</div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(branchDiv);
+        });
+        
+    } catch (error) {
+        console.error('خطأ في تحميل تقرير الفروع:', error);
+        alert('❌ خطأ في تحميل تقرير الفروع');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// ==================== دوال مساعدة ====================
+function hideAllSections() {
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.add('hidden');
+    });
+}
+
+function showLoading(show) {
+    const loadingView = document.getElementById('loadingView');
+    if (show) {
+        loadingView.classList.remove('hidden');
+    } else {
+        loadingView.classList.add('hidden');
+    }
+}
+
+function backToMain() {
+    hideAllSections();
+}
+
+// ==================== تهيئة التطبيق ====================
+document.addEventListener('DOMContentLoaded', function() {
+    // إخفاء شاشة التحميل بعد تهيئة الصفحة
+    setTimeout(() => {
+        showLoading(false);
+        loginView.classList.remove('hidden');
+    }, 1000);
+    
+    // تعيين التاريخ الحالي في حقول التاريخ
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('invDate').value = today;
+});
+
+// إضافة مستمع للأخطاء العامة
+window.addEventListener('error', function(e) {
+    console.error('حدث خطأ:', e.error);
+    alert('حدث خطأ غير متوقع في التطبيق. يرجى تحديث الصفحة.');
+});
+</script>
+</body>
+</html>
